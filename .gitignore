@@ -3,28 +3,27 @@
 venv/
 env/
 
-# Python Bytecode & Caches
+# Python Bytecode & Cache
 __pycache__/
 *.py[cod]
 *$py.class
 .pytest_cache/
 
-# Scrapy Runtime Artifacts & Feeds
+# Scrapy Runtime & Cache
 .scrapy/
 *.log
-feeds/
+
+# Scraped Data Exports (Keep repositories clean)
+*.json
+*.csv
+*.xml
+*.jsonl
 data/raw/*
 !data/raw/.gitkeep
 data/processed/*
 !data/processed/.gitkeep
 
-# Local Secrets & Credentials
-.env
-.env.*
-*.pem
-*.key
-
-# IDE & OS Specifics
+# IDEs & System Files
 .vscode/
 .idea/
 .DS_Store

@@ -3,11 +3,10 @@
 # See documentation in:
 # https://docs.scrapy.org/en/latest/topics/items.html
 
-from dataclasses import dataclass
+import scrapy
 
 
-@dataclass
-class ScrapyappItem:
-    # define the fields for your item here like:
-    # name: str | None = None
-    pass
+class ChocolateProduct(scrapy.Item):
+    name = scrapy.Field()
+    price = scrapy.Field()
+    url = scrapy.Field()

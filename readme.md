@@ -76,3 +76,12 @@ Below are the benchmark metrics from the latest execution run:
 | **Response Code** | HTTP 200 OK (all endpoints) |
 | **Downloader Throughput** | ~1020 items/min |
 | **Execution Wall Time** | ~4.6 seconds |
+
+
+### 📋 Extracted Data Preview (Sample)
+
+| Name | Price | Product URL |
+| :--- | :--- | :--- |
+| 2.5kg Bulk 41% Milk Hot Chocolate Drops | £50.00 | `/products/2-5kg-bulk-of-our-41-milk-hot-chocolate-drops` |
+| 41% Milk Hot Chocolate Drops | £8.75 | `/products/41-colombian-milk-hot-chocolate-drops` |
+| Blonde Caramel | £5.00 | `/products/blonde-caramel-chocolate-bar` |

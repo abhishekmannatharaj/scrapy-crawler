@@ -1,6 +1,6 @@
 import scrapy
-import scrapyapp.items as items
-from scrapyapp.items import ScrapyappProduct
+
+from scrapyapp.itemloaders import ChocolateProductLoader
 
 class SpiderappSpider(scrapy.Spider):
     name = "spiderapp"
@@ -11,21 +11,13 @@ class SpiderappSpider(scrapy.Spider):
 
         products = response.css('product-item')
         for product in products:
-            loader = ScrapyappItemLoader(item=ScrapyappProduct(), response=response)
+            loader = ChocolateProductLoader(selector=product, response=response)
             loader.add_css('name', 'a.product-item-meta__title::text')
-            loader.add_css('price', 'span.price')
+            loader.add_css('price', 'span.price::text')
             loader.add_css('url', 'div.product-item-meta a::attr(href)')
             yield loader.load_item()
 
         next_page = response.css('[rel="next"] ::attr(href)').get()
 
         if next_page is not None:
-            next_page_url = 'https://www.chocolate.co.uk' + next_page
-            yield response.follow(next_page_url, callback=self.parse)
-            
-
-        next_page = response.css('[rel="next"] ::attr(href)').get()
-
-        if next_page is not None:
-            next_page_url = 'https://www.chocolate.co.uk' + next_page
-            yield response.follow(next_page_url, callback=self.parse)
+            yield response.follow(next_page, callback=self.parse)

@@ -1,3 +1,6 @@
+import os
+
+
 # Scrapy settings for scrapyapp project
 #
 # For simplicity, this file contains only settings considered important or
@@ -85,3 +88,30 @@ DOWNLOAD_DELAY = 1
 
 # Set settings whose default value is deprecated to a future-proof value
 FEED_EXPORT_ENCODING = "utf-8"
+
+# Optional persistence and messaging integrations. Keep this empty for local feeds.
+PERSISTENCE_BACKENDS = {
+	backend.strip().lower()
+	for backend in os.getenv("SCRAPY_PERSISTENCE_BACKENDS", "").split(",")
+	if backend.strip()
+}
+
+ITEM_PIPELINES = {}
+if "postgres" in PERSISTENCE_BACKENDS:
+	ITEM_PIPELINES["scrapyapp.pipelines.PostgresPipeline"] = 300
+if "mongodb" in PERSISTENCE_BACKENDS:
+	ITEM_PIPELINES["scrapyapp.pipelines.MongoPipeline"] = 310
+if "redis" in PERSISTENCE_BACKENDS:
+	ITEM_PIPELINES["scrapyapp.pipelines.RedisPipeline"] = 320
+if "rabbitmq" in PERSISTENCE_BACKENDS:
+	ITEM_PIPELINES["scrapyapp.pipelines.RabbitMQPipeline"] = 330
+
+POSTGRES_DSN = os.getenv("POSTGRES_DSN", "")
+MONGODB_URI = os.getenv("MONGODB_URI", "mongodb://localhost:27017")
+MONGODB_DATABASE = os.getenv("MONGODB_DATABASE", "scrapyapp")
+MONGODB_COLLECTION = os.getenv("MONGODB_COLLECTION", "products")
+REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379/0")
+RABBITMQ_URL = os.getenv("RABBITMQ_URL", "amqp://guest:guest@localhost:5672/%2F")
+RABBITMQ_QUEUE = os.getenv("RABBITMQ_QUEUE", "scrapyapp.items")
+CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL", RABBITMQ_URL)
+CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND", REDIS_URL)

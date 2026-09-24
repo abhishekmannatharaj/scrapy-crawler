@@ -62,8 +62,48 @@ scrapy crawl spiderapp -o mydata.json
 scrapy crawl spiderapp -O mydata.json
 
 # Export to CSV
-scrapy crawl spiderapp -o mydata.csv
+scrapy crawl spiderapp -O mydata.csv
 ```
+
+Prices are exported as numbers and product URLs are absolute URLs. The spider
+uses XPath for product extraction and `response.urljoin` for link resolution.
+
+## External Systems
+
+Persistence and messaging are opt-in. Set a comma-separated list in
+`SCRAPY_PERSISTENCE_BACKENDS` before starting a crawl:
+
+```powershell
+$env:SCRAPY_PERSISTENCE_BACKENDS = "postgres,mongodb,redis,rabbitmq"
+$env:POSTGRES_DSN = "postgresql://user:password@localhost:5432/scrapyapp"
+$env:MONGODB_URI = "mongodb://localhost:27017"
+$env:REDIS_URL = "redis://localhost:6379/0"
+$env:RABBITMQ_URL = "amqp://guest:guest@localhost:5672/%2F"
+scrapy crawl spiderapp
+```
+
+The PostgreSQL and MongoDB pipelines persist products, Redis stores JSON items
+in `scrapyapp:products`, and RabbitMQ publishes durable messages to the
+`scrapyapp.items` queue. The services must be running before the crawl starts.
+
+Celery uses RabbitMQ as its broker and Redis as its result backend by default.
+Start a Windows worker from the project directory:
+
+```powershell
+celery -A scrapyapp.tasks worker --loglevel=INFO --pool=solo
+```
+
+Queue a crawl from Python or a Celery client:
+
+```python
+from scrapyapp.tasks import crawl_spider
+
+crawl_spider.delay("spiderapp")
+```
+
+For larger deployments, run multiple Celery workers and use shared
+RabbitMQ/Redis instances. Set `CELERY_BROKER_URL` and `CELERY_RESULT_BACKEND`
+when those services are not local.
 
 ## 📈 Crawl Metrics & Verification
 
